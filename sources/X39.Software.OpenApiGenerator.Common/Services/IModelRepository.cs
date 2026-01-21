@@ -7,6 +7,6 @@ public interface IModelRepository
 {
     bool IsModelKnown(string name);
     void AddModel(IModel model);
-    public IModel? GetModel(string name);
-    public bool TryGetModel(string name, [NotNullWhen(true)] out IModel? model);
+    IModel? GetModel(string name);
+    bool TryGetModel(string name, [NotNullWhen(true)] out IModel? model);
 }

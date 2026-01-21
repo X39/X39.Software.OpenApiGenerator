@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi;
+using X39.Software.OpenApiGenerator.Common.Endpoints;
 
 namespace X39.Software.OpenApiGenerator.Common.Services;
 
@@ -13,7 +14,7 @@ public interface ISchemaNameResolver
     /// <param name="path">The path associated with the schema.</param>
     /// <param name="parameterName">The name of the parameter for which the schema name is being created.</param>
     /// <returns>The generated schema name for the given path and parameter.</returns>
-    string GetPathSchemaName(string path, string parameterName);
+    string GetPathParameterName(string path, string parameterName);
 
     /// <summary>
     /// Resolves the schema name for an enumeration based on the provided path hint and nullable flag.
@@ -82,7 +83,7 @@ public interface ISchemaNameResolver
     /// <param name="operationType">The HTTP method or operation type (e.g., GET, POST, PUT) related to the request.</param>
     /// <param name="contentType">The MIME type of the request body content (e.g., application/json, multipart/form-data).</param>
     /// <returns>A string representing the generated schema name for the request body.</returns>
-    string GetRequestBodySchemaName(string path, string operationType, string contentType);
+    string GetRequestBodySchemaName(string path, EHttpMethod operationType, MimeType contentType);
 
     /// <summary>
     /// Generates a schema name for a response based on the provided path, operation type, response key, and content type.
@@ -92,5 +93,5 @@ public interface ISchemaNameResolver
     /// <param name="responseKey">The key identifying the response (e.g., status code like 200, 404).</param>
     /// <param name="contentType">The content type of the response, such as "application/json" or "text/plain".</param>
     /// <returns>A string representing the generated schema name for the response.</returns>
-    string GetResponseSchemaName(string path, string operationType, string responseKey, string contentType);
+    string GetResponseSchemaName(string path, EHttpMethod operationType, string responseKey, MimeType contentType);
 }

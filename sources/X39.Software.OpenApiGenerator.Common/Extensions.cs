@@ -1,4 +1,6 @@
-﻿using X39.Software.OpenApiGenerator.Common.Models;
+﻿using Microsoft.OpenApi;
+using X39.Software.OpenApiGenerator.Common.Endpoints;
+using X39.Software.OpenApiGenerator.Common.Models;
 using X39.Software.OpenApiGenerator.Common.Services;
 
 namespace X39.Software.OpenApiGenerator.Common;
@@ -49,5 +51,29 @@ public static class Extensions
         public T ResolveOrThrow<T>(IModelRepository modelRepository)
             where T : IModel
             => modelRepository.GetModelOrThrow<T>(modelReference.Name);
+    }
+
+    extension(HttpMethod httpMethod)
+    {
+        public EHttpMethod ToEnum()
+            => httpMethod.Method.ToUpper() switch
+            {
+                "GET"     => EHttpMethod.GET,
+                "PUT"     => EHttpMethod.PUT,
+                "POST"    => EHttpMethod.POST,
+                "DELETE"  => EHttpMethod.DELETE,
+                "HEAD"    => EHttpMethod.HEAD,
+                "OPTIONS" => EHttpMethod.OPTIONS,
+                "TRACE"   => EHttpMethod.TRACE,
+                "PATCH"   => EHttpMethod.PATCH,
+                "QUERY"   => EHttpMethod.QUERY,
+                "CONNECT" => EHttpMethod.CONNECT,
+                _         => throw new ArgumentOutOfRangeException(),
+            };
+    }
+
+    extension(ParameterLocation parameterLocation)
+    {
+        public EEndpointParameterLocation ToInternalEnum() => (EEndpointParameterLocation) parameterLocation;
     }
 }

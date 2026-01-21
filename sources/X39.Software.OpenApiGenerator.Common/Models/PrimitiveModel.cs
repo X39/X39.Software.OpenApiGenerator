@@ -1,10 +1,13 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace X39.Software.OpenApiGenerator.Common.Models;
 
-public sealed record PrimitiveModel : IModel
+public sealed record PrimitiveModel() : IModel
 {
+    [SetsRequiredMembers]
     public PrimitiveModel(EModelType modelType)
+        : this()
     {
         if (modelType is EModelType.Array or EModelType.Object)
             throw new ArgumentException("Primitive model cannot be an array or object.", nameof(modelType));
@@ -25,5 +28,5 @@ public sealed record PrimitiveModel : IModel
             _                  => throw new ArgumentOutOfRangeException(),
         };
 
-    public EModelType Type { get; }
+    public required EModelType Type { get; init; }
 }

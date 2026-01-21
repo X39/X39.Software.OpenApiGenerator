@@ -1,13 +1,17 @@
-﻿namespace X39.Software.OpenApiGenerator.Common.Endpoints;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace X39.Software.OpenApiGenerator.Common.Endpoints;
 
 public sealed class EndpointResponse()
 {
-    public EndpointResponse(int statusCode, params IEnumerable<ModelReference> schemas) : this()
+    [SetsRequiredMembers]
+    public EndpointResponse(int statusCode, params IEnumerable<KeyValuePair<MimeType, ModelReference>> schemas)
+        : this()
     {
         StatusCode = statusCode;
-        Schemas    = schemas.ToDictionary(s => s.Name);
+        Schemas    = schemas.ToDictionary(s => s.Key, s => s.Value);
     }
 
     public required int StatusCode { get; init; }
-    public required Dictionary<string, ModelReference> Schemas { get; init; }
+    public required Dictionary<MimeType, ModelReference> Schemas { get; init; }
 }

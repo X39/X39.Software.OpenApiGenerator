@@ -48,7 +48,7 @@ public sealed class EnumSchemaTests : SchemaExtractorTestBase
         repository.AssertModel(
             new EnumModel
             {
-                Name     = schemaNameResolver.GetPathSchemaName("/test", "enumParam"),
+                Name     = schemaNameResolver.GetPathParameterName("/test", "enumParam"),
                 Values   = ["value1", "value2"],
                 Nullable = false,
             }
@@ -93,7 +93,7 @@ public sealed class EnumSchemaTests : SchemaExtractorTestBase
         repository.AssertModel(
             new EnumModel
             {
-                Name     = schemaNameResolver.GetPathSchemaName("/test", "enumParam"),
+                Name     = schemaNameResolver.GetPathParameterName("/test", "enumParam"),
                 Values   = ["value1", "value2"],
                 Nullable = true,
             }
@@ -203,7 +203,7 @@ public sealed class EnumSchemaTests : SchemaExtractorTestBase
         repository.AssertModel(
             new EnumModel
             {
-                Name     = schemaNameResolver.GetPathSchemaName("/test", "enumParam2"),
+                Name     = schemaNameResolver.GetPathParameterName("/test", "enumParam2"),
                 Values   = ["value1", "value2"],
                 Nullable = true,
             }

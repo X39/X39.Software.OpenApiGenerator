@@ -14,6 +14,7 @@
         <PackageReference Include="Serilog.Sinks.Console"/>
         <PackageReference Include="Serilog.Sinks.File"/>
         <PackageReference Include="System.CommandLine"/>
+        <PackageReference Include="X39.Util" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\X39.Software.OpenApiGenerator.Common\X39.Software.OpenApiGenerator.Common.csproj"/>

@@ -40,7 +40,7 @@ internal sealed class SchemaExtractor(
                 var results = await ExtractSchemaAsync(
                     cancellationToken,
                     pathParameter.Schema,
-                    schemaNameResolver.GetPathSchemaName(key, pathParameter.Name)
+                    schemaNameResolver.GetPathParameterName(key, pathParameter.Name)
                 );
                 if (results is null)
                     flag = false;
@@ -50,7 +50,7 @@ internal sealed class SchemaExtractor(
             {
                 foreach (var operationKeyValuePair in pathItem.Operations)
                 {
-                    var operationType = operationKeyValuePair.Key.ToString();
+                    var operationType = operationKeyValuePair.Key.ToEnum();
                     var operation = operationKeyValuePair.Value;
                     if (operation.RequestBody?.Content is not null)
                     {
@@ -132,8 +132,9 @@ internal sealed class SchemaExtractor(
                     else
                         outputSchemas.AddRange(schemasFound);
                 }
-
-                return error ? null : outputSchemas.ToImmutableList();
+                if (!modelRepository.IsModelKnown(key))
+                    modelRepository.AddModel(new OneOfModel(key, outputSchemas.ToImmutableList()));
+                return error ? null : [key];
             }
             case OpenApiSchema openApiSchema when openApiSchema is { AllOf: { } allOf }:
             {
@@ -152,7 +153,9 @@ internal sealed class SchemaExtractor(
                         outputSchemas.AddRange(schemasFound);
                 }
 
-                return error ? null : outputSchemas.ToImmutableList();
+                if (!modelRepository.IsModelKnown(key))
+                    modelRepository.AddModel(new AllOfModel(key, outputSchemas.ToImmutableList()));
+                return error ? null : [key];
             }
             case OpenApiSchema openApiSchema when openApiSchema is { AnyOf: { } anyOf }:
             {
@@ -171,7 +174,9 @@ internal sealed class SchemaExtractor(
                         outputSchemas.AddRange(schemasFound);
                 }
 
-                return error ? null : outputSchemas.ToImmutableList();
+                if (!modelRepository.IsModelKnown(key))
+                    modelRepository.AddModel(new AnyOfModel(key, outputSchemas.ToImmutableList()));
+                return error ? null : [key];
             }
             case OpenApiSchema openApiSchema:
                 return await ExtractSchemaAsync(key, openApiSchema, cancellationToken);

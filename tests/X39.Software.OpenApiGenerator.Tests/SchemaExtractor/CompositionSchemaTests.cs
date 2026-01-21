@@ -59,7 +59,7 @@ public sealed class CompositionSchemaTests : SchemaExtractorTestBase
             new ObjectModel
             {
                 Name = schemaNameResolver.GetAllOfParameterName(
-                    schemaNameResolver.GetPathSchemaName("/test", "allOfParam"),
+                    schemaNameResolver.GetPathParameterName("/test", "allOfParam"),
                     0
                 ),
                 Properties = new()
@@ -70,7 +70,7 @@ public sealed class CompositionSchemaTests : SchemaExtractorTestBase
             new ObjectModel
             {
                 Name = schemaNameResolver.GetAllOfParameterName(
-                    schemaNameResolver.GetPathSchemaName("/test", "allOfParam"),
+                    schemaNameResolver.GetPathParameterName("/test", "allOfParam"),
                     1
                 ),
                 Properties = new()

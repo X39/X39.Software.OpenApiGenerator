@@ -4,7 +4,7 @@ namespace X39.Software.OpenApiGenerator.Common.Endpoints;
 
 public interface IPathPart
 {
-    string Key { get; }
-    ImmutableList<IPathPart> Children { get; }
-    ImmutableDictionary<EHttpMethod, Endpoint>? Endpoints { get; }
+    string Name { get; }
+    Dictionary<string, IPathPart> Children { get; }
+    Dictionary<EHttpMethod, Endpoint>? Endpoints { get; set; }
 }

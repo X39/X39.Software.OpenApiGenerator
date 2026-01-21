@@ -6,11 +6,13 @@ namespace X39.Software.OpenApiGenerator.Common.Endpoints;
 public enum EHttpMethod
 {
     GET,
-    POST,
     PUT,
+    POST,
     DELETE,
-    OPTIONS,
     HEAD,
-    PATCH,
+    OPTIONS,
     TRACE,
+    PATCH,
+    QUERY,
+    CONNECT,
 }

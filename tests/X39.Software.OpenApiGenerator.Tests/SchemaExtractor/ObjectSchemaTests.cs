@@ -54,7 +54,7 @@ public sealed class ObjectSchemaTests : SchemaExtractorTestBase
 
         // Assert
         Assert.True(result);
-        var objName = schemaNameResolver.GetPathSchemaName("/test", "objParam");
+        var objName = schemaNameResolver.GetPathParameterName("/test", "objParam");
         repository.AssertModel(
             new ObjectModel
             {
@@ -116,7 +116,7 @@ public sealed class ObjectSchemaTests : SchemaExtractorTestBase
         repository.AssertModel(
             new ObjectModel
             {
-                Name = schemaNameResolver.GetPathSchemaName("/test", "objParam"),
+                Name = schemaNameResolver.GetPathParameterName("/test", "objParam"),
                 Properties = new Dictionary<string, ModelProperty>
                 {
                     ["prop1"] = new("prop1", [Constants.KnownTypes.String], EModelModifier.Required),
@@ -171,7 +171,7 @@ public sealed class ObjectSchemaTests : SchemaExtractorTestBase
         repository.AssertModel(
             new ObjectModel
             {
-                Name = schemaNameResolver.GetPathSchemaName("/test", "objParam"),
+                Name = schemaNameResolver.GetPathParameterName("/test", "objParam"),
                 Properties = new Dictionary<string, ModelProperty>
                 {
                     ["prop1"] = new(
@@ -228,7 +228,7 @@ public sealed class ObjectSchemaTests : SchemaExtractorTestBase
         repository.AssertModel(
             new ObjectModel
             {
-                Name = schemaNameResolver.GetPathSchemaName("/test", "objParam"),
+                Name = schemaNameResolver.GetPathParameterName("/test", "objParam"),
                 Properties = new Dictionary<string, ModelProperty>
                 {
                     ["prop1"] = new(
@@ -283,7 +283,7 @@ public sealed class ObjectSchemaTests : SchemaExtractorTestBase
 
         // Assert
         Assert.True(result);
-        var objName = schemaNameResolver.GetPathSchemaName("/test", "objParam");
+        var objName = schemaNameResolver.GetPathParameterName("/test", "objParam");
         repository.AssertModel(
             new ObjectModel
             {
@@ -347,7 +347,7 @@ public sealed class ObjectSchemaTests : SchemaExtractorTestBase
         repository.AssertModel(
             new ObjectModel
             {
-                Name = schemaNameResolver.GetPathSchemaName("/test", "objParam"),
+                Name = schemaNameResolver.GetPathParameterName("/test", "objParam"),
                 Properties = new Dictionary<string, ModelProperty>(),
             }
         );

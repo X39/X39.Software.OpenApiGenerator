@@ -55,11 +55,11 @@ public sealed class ArraySchemaTests : SchemaExtractorTestBase
         repository.AssertModel(
             new ArrayModel
             {
-                Name = schemaNameResolver.GetPathSchemaName("/test", "arrayOfObjectsParam"),
+                Name = schemaNameResolver.GetPathParameterName("/test", "arrayOfObjectsParam"),
                 ItemModelReferences =
                 [
                     schemaNameResolver.GetArraySchemaName(
-                        schemaNameResolver.GetPathSchemaName("/test", "arrayOfObjectsParam")
+                        schemaNameResolver.GetPathParameterName("/test", "arrayOfObjectsParam")
                     )
                 ],
             }
@@ -68,7 +68,7 @@ public sealed class ArraySchemaTests : SchemaExtractorTestBase
             new ObjectModel
             {
                 Name = schemaNameResolver.GetArraySchemaName(
-                    schemaNameResolver.GetPathSchemaName("/test", "arrayOfObjectsParam")
+                    schemaNameResolver.GetPathParameterName("/test", "arrayOfObjectsParam")
                 ),
                 Properties = new Dictionary<string, ModelProperty>
                 {
@@ -116,7 +116,7 @@ public sealed class ArraySchemaTests : SchemaExtractorTestBase
         repository.AssertModel(
             new ArrayModel
             {
-                Name = schemaNameResolver.GetPathSchemaName("/test", "arrayParam"),
+                Name = schemaNameResolver.GetPathParameterName("/test", "arrayParam"),
                 ItemModelReferences = [Constants.KnownTypes.String],
             }
         );

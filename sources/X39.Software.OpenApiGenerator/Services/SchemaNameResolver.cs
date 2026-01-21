@@ -1,12 +1,14 @@
 ﻿using System.Text.Json.Nodes;
 using Microsoft.OpenApi;
+using X39.Software.OpenApiGenerator.Common;
+using X39.Software.OpenApiGenerator.Common.Endpoints;
 using X39.Software.OpenApiGenerator.Common.Services;
 
 namespace X39.Software.OpenApiGenerator.Services;
 
 internal sealed class SchemaNameResolver : ISchemaNameResolver
 {
-    public string GetPathSchemaName(string path, string parameterName)
+    public string GetPathParameterName(string path, string parameterName)
     {
         return $"{path}/.{parameterName}";
     }
@@ -44,13 +46,13 @@ internal sealed class SchemaNameResolver : ISchemaNameResolver
         return $"{pathHint}[]";
     }
 
-    public string GetRequestBodySchemaName(string path, string operationType, string contentType)
+    public string GetRequestBodySchemaName(string path, EHttpMethod operationType, MimeType contentType)
     {
-        return $"{path}/{operationType.ToLower()}/request/{contentType}";
+        return $"{path}/{Enum.GetName(operationType)}/request/{contentType}";
     }
 
-    public string GetResponseSchemaName(string path, string operationType, string responseKey, string contentType)
+    public string GetResponseSchemaName(string path, EHttpMethod operationType, string responseKey, MimeType contentType)
     {
-        return $"{path}/{operationType.ToLower()}/{responseKey}/{contentType}";
+        return $"{path}/{Enum.GetName(operationType)}/{responseKey}/{contentType}";
     }
 }

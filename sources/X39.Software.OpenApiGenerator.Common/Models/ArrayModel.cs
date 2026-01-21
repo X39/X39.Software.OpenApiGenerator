@@ -1,9 +1,18 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 
 namespace X39.Software.OpenApiGenerator.Common.Models;
 
-public sealed class ArrayModel : IModel, IEquatable<ArrayModel>, IEqualityComparer<ArrayModel>
+public sealed class ArrayModel() : IModel, IEquatable<ArrayModel>, IEqualityComparer<ArrayModel>
 {
+
+    [SetsRequiredMembers]
+    public ArrayModel(string name, params IEnumerable<ModelReference> itemModelReferences)
+        : this()
+    {
+        Name              = name;
+        ItemModelReferences = itemModelReferences.ToImmutableList();
+    }
     public required string Name { get; init; }
     public EModelType Type => EModelType.Array;
 
