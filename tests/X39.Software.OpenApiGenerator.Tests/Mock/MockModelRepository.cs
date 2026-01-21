@@ -78,17 +78,35 @@ public sealed class MockModelRepository : IModelRepository
                         }
                         catch (XunitException ex)
                         {
-                            throw new XunitException($"Exception while validating property '{key}' of object model '{objectModel.Name}': {ex.Message}", ex);
+                            throw new XunitException(
+                                $"Exception while validating property '{key}' of object model '{objectModel.Name}': {ex.Message}",
+                                ex
+                            );
                         }
                     }
                 }
+
                 break;
             case ArrayModel arrayModel:
                 Assert.Equal(arrayModel.ItemModelReferences.Count, ((ArrayModel) existing).ItemModelReferences.Count);
                 foreach (var value in arrayModel.ItemModelReferences)
-                {
                     Assert.Contains(value, ((ArrayModel) existing).ItemModelReferences);
-                }
+
+                break;
+            case AllOfModel allOfModel:
+                Assert.Equal(allOfModel.ModelReferences.Count, ((AllOfModel) existing).ModelReferences.Count);
+                foreach (var value in allOfModel.ModelReferences)
+                    Assert.Contains(value, ((AllOfModel) existing).ModelReferences);
+                break;
+            case OneOfModel oneOfModel:
+                Assert.Equal(oneOfModel.ModelReferences.Count, ((OneOfModel) existing).ModelReferences.Count);
+                foreach (var value in oneOfModel.ModelReferences)
+                    Assert.Contains(value, ((OneOfModel) existing).ModelReferences);
+                break;
+            case AnyOfModel anyOfModel:
+                Assert.Equal(anyOfModel.ModelReferences.Count, ((AnyOfModel) existing).ModelReferences.Count);
+                foreach (var value in anyOfModel.ModelReferences)
+                    Assert.Contains(value, ((AnyOfModel) existing).ModelReferences);
                 break;
             default:
                 Assert.Fail($"Unhandled model type {model.GetType().FullName}");

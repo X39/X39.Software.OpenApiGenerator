@@ -17,7 +17,8 @@ public sealed class CompositionSchemaTests : SchemaExtractorTestBase
         var logger = Substitute.For<ILogger<X39.Software.OpenApiGenerator.Services.SchemaExtractor>>();
         var repository = new MockModelRepository();
         var schemaNameResolver = new SchemaNameResolver();
-        var schemaExtractor = new X39.Software.OpenApiGenerator.Services.SchemaExtractor(logger, schemaNameResolver, repository);
+        var schemaExtractor =
+            new X39.Software.OpenApiGenerator.Services.SchemaExtractor(logger, schemaNameResolver, repository);
         var document = OpenApiDocument.Parse(
             """
             openapi: 3.1.0
@@ -52,7 +53,7 @@ public sealed class CompositionSchemaTests : SchemaExtractorTestBase
 
         // Assert
         Assert.True(result);
-        Assert.Equal(4, repository.ModelCount);
+        Assert.Equal(5, repository.ModelCount);
         repository.AssertModel(new PrimitiveModel(EModelType.Integer));
         repository.AssertModel(new PrimitiveModel(EModelType.String));
         repository.AssertModel(
@@ -79,6 +80,21 @@ public sealed class CompositionSchemaTests : SchemaExtractorTestBase
                 },
             }
         );
+        repository.AssertModel(
+            new AllOfModel(
+                schemaNameResolver.GetPathParameterName("/test", "allOfParam"),
+                [
+                    schemaNameResolver.GetAllOfParameterName(
+                        schemaNameResolver.GetPathParameterName("/test", "allOfParam"),
+                        0
+                    ),
+                    schemaNameResolver.GetAllOfParameterName(
+                        schemaNameResolver.GetPathParameterName("/test", "allOfParam"),
+                        1
+                    )
+                ]
+            )
+        );
     }
 
     [Fact]
@@ -88,7 +104,8 @@ public sealed class CompositionSchemaTests : SchemaExtractorTestBase
         var logger = Substitute.For<ILogger<X39.Software.OpenApiGenerator.Services.SchemaExtractor>>();
         var repository = new MockModelRepository();
         var schemaNameResolver = new SchemaNameResolver();
-        var schemaExtractor = new X39.Software.OpenApiGenerator.Services.SchemaExtractor(logger, schemaNameResolver, repository);
+        var schemaExtractor =
+            new X39.Software.OpenApiGenerator.Services.SchemaExtractor(logger, schemaNameResolver, repository);
         var document = OpenApiDocument.Parse(
             """
             openapi: 3.1.0
@@ -117,9 +134,15 @@ public sealed class CompositionSchemaTests : SchemaExtractorTestBase
 
         // Assert
         Assert.True(result);
-        Assert.Equal(2, repository.ModelCount);
+        Assert.Equal(3, repository.ModelCount);
         repository.AssertModel(new PrimitiveModel(EModelType.String));
         repository.AssertModel(new PrimitiveModel(EModelType.Integer));
+        repository.AssertModel(
+            new OneOfModel(
+                schemaNameResolver.GetPathParameterName("/test", "oneOfParam"),
+                [Constants.KnownTypes.String, Constants.KnownTypes.Integer,]
+            )
+        );
     }
 
     [Fact]
@@ -129,7 +152,8 @@ public sealed class CompositionSchemaTests : SchemaExtractorTestBase
         var logger = Substitute.For<ILogger<X39.Software.OpenApiGenerator.Services.SchemaExtractor>>();
         var repository = new MockModelRepository();
         var schemaNameResolver = new SchemaNameResolver();
-        var schemaExtractor = new X39.Software.OpenApiGenerator.Services.SchemaExtractor(logger, schemaNameResolver, repository);
+        var schemaExtractor =
+            new X39.Software.OpenApiGenerator.Services.SchemaExtractor(logger, schemaNameResolver, repository);
         var document = OpenApiDocument.Parse(
             """
             openapi: 3.1.0
@@ -158,8 +182,14 @@ public sealed class CompositionSchemaTests : SchemaExtractorTestBase
 
         // Assert
         Assert.True(result);
-        Assert.Equal(2, repository.ModelCount);
+        Assert.Equal(3, repository.ModelCount);
         repository.AssertModel(new PrimitiveModel(EModelType.String));
         repository.AssertModel(new PrimitiveModel(EModelType.Integer));
+        repository.AssertModel(
+            new AnyOfModel(
+                schemaNameResolver.GetPathParameterName("/test", "anyOfParam"),
+                [Constants.KnownTypes.String, Constants.KnownTypes.Integer,]
+            )
+        );
     }
 }

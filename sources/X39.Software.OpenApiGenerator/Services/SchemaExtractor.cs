@@ -5,6 +5,7 @@ using Microsoft.OpenApi;
 using X39.Software.OpenApiGenerator.Common;
 using X39.Software.OpenApiGenerator.Common.Models;
 using X39.Software.OpenApiGenerator.Common.Services;
+using X39.Util;
 
 namespace X39.Software.OpenApiGenerator.Services;
 
@@ -79,7 +80,7 @@ internal sealed class SchemaExtractor(
                             var results = await ExtractSchemaAsync(
                                 cancellationToken,
                                 mediaType.Schema,
-                                schemaNameResolver.GetResponseSchemaName(key, operationType, responseKey, contentType)
+                                schemaNameResolver.GetResponseSchemaName(key, operationType, responseKey.ToInt32(), contentType)
                             );
                             if (results is null)
                                 flag = false;

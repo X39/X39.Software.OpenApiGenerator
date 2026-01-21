@@ -2,6 +2,7 @@
 using Microsoft.OpenApi;
 using NSubstitute;
 using X39.Software.OpenApiGenerator.Common;
+using X39.Software.OpenApiGenerator.Common.Endpoints;
 using X39.Software.OpenApiGenerator.Common.Models;
 using X39.Software.OpenApiGenerator.Services;
 using X39.Software.OpenApiGenerator.Tests.Mock;
@@ -57,7 +58,7 @@ public sealed class RequestSchemaTests : SchemaExtractorTestBase
         repository.AssertModel(
             new ObjectModel
             {
-                Name = "/test/post/request/application/json",
+                Name = schemaNameResolver.GetRequestBodySchemaName("/test", EHttpMethod.POST, "application/json"),
                 Properties = new()
                 {
                     { "name", new ModelProperty("name", [Constants.KnownTypes.String], EModelModifier.Optional) }

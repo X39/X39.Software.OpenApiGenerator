@@ -88,7 +88,7 @@ internal sealed class EndpointExtractor(
                                                     schemaNameResolver.GetResponseSchemaName(
                                                         key,
                                                         httpMethodEnum,
-                                                        kvp.Key,
+                                                        e.Key.ToInt32(),
                                                         kvp.Key
                                                     )
                                                 )

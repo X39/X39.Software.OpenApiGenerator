@@ -19,4 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\sources\X39.Software.OpenApiGenerator\X39.Software.OpenApiGenerator.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="EndpointExtractor\" />
+  </ItemGroup>
 </Project>

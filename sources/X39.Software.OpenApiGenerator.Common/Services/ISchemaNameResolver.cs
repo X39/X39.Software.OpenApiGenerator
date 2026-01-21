@@ -93,5 +93,10 @@ public interface ISchemaNameResolver
     /// <param name="responseKey">The key identifying the response (e.g., status code like 200, 404).</param>
     /// <param name="contentType">The content type of the response, such as "application/json" or "text/plain".</param>
     /// <returns>A string representing the generated schema name for the response.</returns>
-    string GetResponseSchemaName(string path, EHttpMethod operationType, string responseKey, MimeType contentType);
+    string GetResponseSchemaName(
+        string path,
+        EHttpMethod operationType,
+        HttpStatusCode responseKey,
+        MimeType contentType
+    );
 }

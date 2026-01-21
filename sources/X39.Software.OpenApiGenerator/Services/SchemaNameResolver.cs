@@ -51,7 +51,7 @@ internal sealed class SchemaNameResolver : ISchemaNameResolver
         return $"{path}/{Enum.GetName(operationType)}/request/{contentType}";
     }
 
-    public string GetResponseSchemaName(string path, EHttpMethod operationType, string responseKey, MimeType contentType)
+    public string GetResponseSchemaName(string path, EHttpMethod operationType, HttpStatusCode responseKey, MimeType contentType)
     {
         return $"{path}/{Enum.GetName(operationType)}/{responseKey}/{contentType}";
     }
