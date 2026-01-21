@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/files/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/sources/">
+    <Project Path="sources/X39.Software.OpenApiGenerator.Common/X39.Software.OpenApiGenerator.Common.csproj" />
+    <Project Path="sources/X39.Software.OpenApiGenerator/X39.Software.OpenApiGenerator.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/X39.Software.OpenApiGenerator.Tests/X39.Software.OpenApiGenerator.Tests.csproj" />
+  </Folder>
+</Solution>
