@@ -6,6 +6,7 @@
   </Folder>
   <Folder Name="/sources/">
     <Project Path="sources/X39.Software.OpenApiGenerator.Common/X39.Software.OpenApiGenerator.Common.csproj" />
+    <Project Path="sources/X39.Software.OpenApiGenerator.Generators.CSharp/X39.Software.OpenApiGenerator.Generators.CSharp.csproj" />
     <Project Path="sources/X39.Software.OpenApiGenerator/X39.Software.OpenApiGenerator.csproj" />
   </Folder>
   <Folder Name="/tests/">

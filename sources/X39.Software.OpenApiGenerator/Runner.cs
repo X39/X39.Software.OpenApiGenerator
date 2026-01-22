@@ -1,21 +1,27 @@
-﻿using System.CommandLine;
+﻿using System.Collections.Immutable;
+using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Reader;
+using X39.Software.OpenApiGenerator.Common;
 using X39.Software.OpenApiGenerator.Common.Services;
-using X39.Software.OpenApiGenerator.Services;
 
 namespace X39.Software.OpenApiGenerator;
 
 public sealed class Runner(
     ILogger<Runner> logger,
+    IServiceProvider serviceProvider,
     ISchemaExtractor schemaExtractor,
     IEndpointExtractor endpointExtractor,
-    IHostApplicationLifetime hostApplicationLifetime) : BackgroundService
+    IHostApplicationLifetime hostApplicationLifetime
+) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await using var serviceScope = serviceProvider.CreateAsyncScope();
         try
         {
             var rootCommand = new RootCommand("OpenApi Generator")
@@ -23,17 +29,22 @@ public sealed class Runner(
                 new Option<string>("--input")
                 {
                     Required = false,
-                    Arity = ArgumentArity.ZeroOrOne,
+                    Arity    = ArgumentArity.ZeroOrOne,
                 },
                 new Option<string>("--output")
                 {
                     Required = false,
-                    Arity = ArgumentArity.ZeroOrOne,
+                    Arity    = ArgumentArity.ZeroOrOne,
                 },
                 new Option<string>("--config")
                 {
                     Required = false,
-                    Arity = ArgumentArity.ZeroOrOne,
+                    Arity    = ArgumentArity.ZeroOrOne,
+                },
+                new Option<string>("--language")
+                {
+                    Required = false,
+                    Arity    = ArgumentArity.ZeroOrOne,
                 },
             };
             var parseResult = rootCommand.Parse(Environment.GetCommandLineArgs());
@@ -50,10 +61,11 @@ public sealed class Runner(
 
             var input = parseResult.GetValue<string>("--input");
             var output = parseResult.GetValue<string>("--output");
+            var language = parseResult.GetValue<string>("--language");
             var config = parseResult.GetValue<string>("--config");
-            if (config is null && (input is null || output is null))
+            if (config is null && (input is null || output is null || language is null))
             {
-                logger.LogError("--input and --output or --config must be specified");
+                logger.LogError("--input and --output and --language or --config must be specified");
                 Program.ExitCode = -1;
                 return;
             }
@@ -61,7 +73,7 @@ public sealed class Runner(
             var options = new Dictionary<string, string>();
             if (config is not null)
             {
-                foreach (var line in await File.ReadAllLinesAsync(config))
+                foreach (var line in await File.ReadAllLinesAsync(config, stoppingToken))
                 {
                     var index = line.IndexOf('=');
                     if (index == -1)
@@ -69,7 +81,12 @@ public sealed class Runner(
                         continue;
                     }
 
-                    options.Add(line[..index].Trim(), line[(index + 1)..].Trim());
+                    options.Add(
+                        line[..index]
+                            .Trim(),
+                        line[(index + 1)..]
+                            .Trim()
+                    );
                 }
             }
 
@@ -87,9 +104,15 @@ public sealed class Runner(
                 return;
             }
 
+            if (language is null && !options.TryGetValue("language", out language))
+            {
+                logger.LogError("--language must be supplied or config must contain language");
+                Program.ExitCode = -1;
+                return;
+            }
 
-            var result = await RunAsync(
-                input, output, options);
+
+            var result = await RunAsync(serviceScope.ServiceProvider, input, output, language, options, stoppingToken);
             Program.ExitCode = result ? 0 : -1;
         }
         catch (Exception ex)
@@ -103,23 +126,40 @@ public sealed class Runner(
         }
     }
 
-    private async Task<bool> RunAsync(string input, string output,
-        Dictionary<string, string> config, CancellationToken cancellationToken = default)
+    private async Task<bool> RunAsync(
+        [SuppressMessage(
+            "ReSharper",
+            "ParameterHidesPrimaryConstructorParameter",
+            Justification = "This is intentional as we want the scoped service provider here"
+        )]
+        IServiceProvider serviceProvider,
+        string input,
+        string output,
+        string language,
+        Dictionary<string, string> config,
+        CancellationToken cancellationToken = default
+    )
     {
         var fileContents = await ReadInputAsync(input);
         if (fileContents is null)
             return false;
 
-        var result = await OpenApiDocument.LoadAsync(fileContents, settings: new OpenApiReaderSettings(),
-            cancellationToken: cancellationToken);
+        var result = await OpenApiDocument.LoadAsync(
+            fileContents,
+            settings: new OpenApiReaderSettings(),
+            cancellationToken: cancellationToken
+        );
         if (result.Diagnostic is not null)
         {
             if (result.Diagnostic.Warnings.Count > 0)
             {
                 foreach (var documentWarning in result.Diagnostic.Warnings)
                 {
-                    logger.LogWarning("Warning during parsing: {Location} {Message}", documentWarning.Pointer,
-                        documentWarning.Message);
+                    logger.LogWarning(
+                        "Warning during parsing: {Location} {Message}",
+                        documentWarning.Pointer,
+                        documentWarning.Message
+                    );
                 }
             }
 
@@ -127,8 +167,11 @@ public sealed class Runner(
             {
                 foreach (var diagnosticError in result.Diagnostic.Errors)
                 {
-                    logger.LogError("Error during parsing: {Location} {Message}", diagnosticError.Pointer,
-                        diagnosticError.Message);
+                    logger.LogError(
+                        "Error during parsing: {Location} {Message}",
+                        diagnosticError.Pointer,
+                        diagnosticError.Message
+                    );
                 }
 
                 return false;
@@ -141,7 +184,6 @@ public sealed class Runner(
             return false;
         }
 
-        // ToDo: Process document
         if (!await schemaExtractor.ExtractSchemasFromDocumentAsync(result.Document, cancellationToken))
         {
             logger.LogError("Schema extraction did not succeed");
@@ -153,6 +195,32 @@ public sealed class Runner(
             logger.LogError("Endpoint extraction did not succeed");
             return false;
         }
+
+        var generator = serviceProvider.GetKeyedService<IGenerator>(language);
+        if (generator is null)
+        {
+            logger.LogError("No generator registered for {Language}", "csharp");
+            return false;
+        }
+
+        if (!await generator.ConfigureAsync(config.ToImmutableDictionary(), cancellationToken))
+        {
+            logger.LogError("Generator configuration failed");
+            return false;
+        }
+
+        if (!await generator.ValidateAsync(cancellationToken))
+        {
+            logger.LogError("Generator validation failed");
+            return false;
+        }
+
+        if (!await generator.GenerateAsync(output, cancellationToken))
+        {
+            logger.LogError("Generator generation failed");
+            return false;
+        }
+
         return true;
     }
 

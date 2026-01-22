@@ -18,6 +18,7 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\X39.Software.OpenApiGenerator.Common\X39.Software.OpenApiGenerator.Common.csproj"/>
+        <ProjectReference Include="..\X39.Software.OpenApiGenerator.Generators.CSharp\X39.Software.OpenApiGenerator.Generators.CSharp.csproj" />
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="X39.Software.OpenApiGenerator.Tests"/>

@@ -3,7 +3,9 @@ using System.Runtime.ExceptionServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using X39.Software.OpenApiGenerator.Common;
 using X39.Software.OpenApiGenerator.Common.Services;
+using X39.Software.OpenApiGenerator.Generators.CSharp;
 using X39.Software.OpenApiGenerator.Services;
 
 namespace X39.Software.OpenApiGenerator;
@@ -22,6 +24,7 @@ public static class Program
         builder.Services.AddHostedService<Runner>();
         builder.Services.AddTransient<ISchemaExtractor, SchemaExtractor>();
         builder.Services.AddSingleton<IModelRepository, ModelRepository>();
+        builder.Services.AddKeyedScoped<IGenerator, CSharpGenerator>("csharp");
         var app = builder.Build();
         await app.RunAsync();
         return ExitCode;
